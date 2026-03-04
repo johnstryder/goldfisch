@@ -53,6 +53,13 @@ app.get('/health', (c) => {
   return c.json({ status: 'ok', timestamp: new Date().toISOString() })
 })
 
+// Runtime config for frontend (PocketBase URL etc.)
+app.get('/api/config', (c) => {
+  return c.json({
+    pocketbaseUrl: process.env.POCKETBASE_URL || 'http://localhost:8090',
+  })
+})
+
 // API routes
 app.get('/api/hello', (c) => {
   trackEvent('api_hello_called')

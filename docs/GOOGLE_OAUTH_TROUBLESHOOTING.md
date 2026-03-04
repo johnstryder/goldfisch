@@ -2,14 +2,14 @@
 
 When you see **"Google provider not found"**, the frontend successfully connected to PocketBase but the auth collection has no Google OAuth provider in its list.
 
-## 1. Verify PocketBase URL at build time
+## 1. Verify PocketBase URL (runtime config)
 
-`VITE_POCKETBASE_URL` is baked into the frontend at **build time**. If it's wrong or missing, the app will hit the wrong PocketBase.
+The frontend fetches the PocketBase URL from `/api/config` at runtime. The backend reads `POCKETBASE_URL` from its environment.
 
-**In Coolify** (or your build env):
+**In Coolify** (runtime env vars for the backend):
 
-- Add `VITE_POCKETBASE_URL=https://pb_goldfisch.iwishihadthis.com` to the **build** environment variables
-- Rebuild the frontend after changing it
+- Set `POCKETBASE_URL=https://pb_goldfisch.iwishihadthis.com`
+- No build-time vars needed; no rebuild required when changing the URL
 
 Check what URL the app uses: open DevTools → Network, click "Sign in with Google", and confirm the request goes to `https://pb_goldfisch.iwishihadthis.com/api/collections/users/...`.
 

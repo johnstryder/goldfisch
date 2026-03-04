@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { Routes, Route, Link } from 'react-router-dom'
 import { usePostHog } from 'posthog-js/react'
+import { ConfigProvider } from './contexts/ConfigContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { OAuthCallback } from './components/OAuthCallback'
 import { Dashboard } from './pages/Dashboard'
@@ -153,9 +154,11 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <AppContent />
-    </AuthProvider>
+    <ConfigProvider>
+      <AuthProvider>
+        <AppContent />
+      </AuthProvider>
+    </ConfigProvider>
   )
 }
 

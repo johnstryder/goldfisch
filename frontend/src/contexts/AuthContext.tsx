@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PocketBase from 'pocketbase'
+import { useConfig } from './ConfigContext'
 
 interface User {
   id: string
@@ -25,8 +26,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
+  const { pocketbaseUrl } = useConfig()
 
-  const pb = new PocketBase(import.meta.env.VITE_POCKETBASE_URL || 'http://localhost:8090')
+  const pb = new PocketBase(pocketbaseUrl)
 
   useEffect(() => {
     // Check if user is already authenticated
@@ -66,7 +68,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const authData = await pb.collection('users').listAuthMethods()
       
       if (!authData?.oauth2?.providers) {
-        const hint = authData ? 'OAuth2 not configured for this collection.' : 'Check VITE_POCKETBASE_URL points to your PocketBase.'
+        const hint = authData ? 'OAuth2 not configured for this collection.' : 'Check POCKETBASE_URL env in backend.'
         throw new Error(`No OAuth providers available. ${hint}`)
       }
 

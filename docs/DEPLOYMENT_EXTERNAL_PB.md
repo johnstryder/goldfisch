@@ -23,7 +23,7 @@ FRONTEND_URL=https://goldfisch.iwishihadthis.com
 VITE_POCKETBASE_URL=https://pb_goldfisch.iwishihadthis.com
 ```
 
-**VITE_POCKETBASE_URL** must be set at **build time** for the frontend (Coolify build env vars).
+**POCKETBASE_URL** is read by the backend and exposed via `/api/config`; the frontend fetches it at runtime. No build-time vars needed.
 
 ## If PocketBase is a separate Coolify app
 

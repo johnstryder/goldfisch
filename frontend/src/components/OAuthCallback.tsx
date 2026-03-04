@@ -3,13 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import PocketBase from 'pocketbase'
 import { Loader2, AlertCircle } from 'lucide-react'
 import { usePostHog } from 'posthog-js/react'
+import { useConfig } from '../contexts/ConfigContext'
 
 export function OAuthCallback() {
   const [error, setError] = useState<string | null>(null)
   const posthog = usePostHog()
   const navigate = useNavigate()
+  const { pocketbaseUrl } = useConfig()
   
-  const pb = new PocketBase(import.meta.env.VITE_POCKETBASE_URL || 'http://localhost:8090')
+  const pb = new PocketBase(pocketbaseUrl)
 
   useEffect(() => {
     const handleOAuthCallback = async () => {
