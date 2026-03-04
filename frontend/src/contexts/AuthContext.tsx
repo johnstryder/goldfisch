@@ -66,10 +66,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       setError(null)
       const authData = await pb.collection('users').listAuthMethods()
-      
-      if (!authData?.oauth2?.providers) {
-        const hint = authData ? 'OAuth2 not configured for this collection.' : 'Check POCKETBASE_URL env in backend.'
-        throw new Error(`No OAuth providers available. ${hint}`)
+      console.debug('[Auth] listAuthMethods response:', JSON.stringify(authData, null, 2))
+
+      if (!authData?.oauth2?.providers || authData.oauth2.providers.length === 0) {
+        const raw = JSON.stringify(authData ?? {}).slice(0, 200)
+        throw new Error(
+          `No OAuth providers available. ` +
+          (authData ? `PocketBase returned: ${raw}... Check Collections → users → Options → OAuth2 has Google enabled with Client ID & Secret.` : 'Check backend can reach PocketBase.')
+        )
       }
 
       const providers = authData.oauth2.providers as Array<{ name: string; authURL: string; state: string; codeVerifier: string }>
