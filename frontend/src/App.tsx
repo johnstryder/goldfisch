@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Link, useLocation } from 'react-router-dom'
 import { usePostHog } from 'posthog-js/react'
 import { ConfigProvider } from './contexts/ConfigContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
@@ -10,9 +10,11 @@ import { ClientScoring } from './pages/ClientScoring'
 import { TimeAllocation } from './pages/TimeAllocation'
 import { DataOnboarding } from './pages/DataOnboarding'
 import { Calendar } from './pages/Calendar'
+import { OAuthCallback } from './pages/OAuthCallback'
 
 function AppContent() {
   const auth = useAuth()
+  const location = useLocation()
   const [items, setItems] = useState<{ id: string; name: string; created: string }[]>([])
   const [loading, setLoading] = useState(false)
   const posthog = usePostHog()
@@ -57,7 +59,7 @@ function AppContent() {
     fetchItems()
   }, [])
 
-  if (auth.isLoading) {
+  if (auth.isLoading && location.pathname !== '/oauth-callback') {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent" />
@@ -67,6 +69,7 @@ function AppContent() {
 
   return (
     <Routes>
+      <Route path="/oauth-callback" element={<OAuthCallback />} />
       <Route
         path="/"
         element={

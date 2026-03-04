@@ -1,8 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import PocketBase from 'pocketbase'
-import { usePostHog } from 'posthog-js/react'
-import { useConfig } from './ConfigContext'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { pb } from '../lib/pocketbase'
 
 interface User {
   id: string
@@ -13,7 +11,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null
-  signInWithGoogle: () => void
+  signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
   getToken: () => string | null
   isLoading: boolean
@@ -27,33 +25,28 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
-  const { pocketbaseUrl } = useConfig()
-  const posthog = usePostHog()
-
-  const pb = new PocketBase(pocketbaseUrl)
+  const location = useLocation()
 
   useEffect(() => {
-    // Check if user is already authenticated
     if (pb.authStore.isValid && pb.authStore.model) {
-      const userModel = pb.authStore.model as any
+      const userModel = pb.authStore.model as Record<string, unknown>
       setUser({
-        id: userModel.id,
-        email: userModel.email,
-        name: userModel.name || userModel.email,
-        avatar: userModel.avatar
+        id: userModel.id as string,
+        email: userModel.email as string,
+        name: (userModel.name as string) || (userModel.email as string),
+        avatar: userModel.avatar as string | undefined
       })
     }
     setIsLoading(false)
 
-    // Listen for auth changes
     const unsubscribe = pb.authStore.onChange((_token, model) => {
       if (model) {
-        const userModel = model as any
+        const userModel = model as Record<string, unknown>
         setUser({
-          id: userModel.id,
-          email: userModel.email,
-          name: userModel.name || userModel.email,
-          avatar: userModel.avatar
+          id: userModel.id as string,
+          email: userModel.email as string,
+          name: (userModel.name as string) || (userModel.email as string),
+          avatar: userModel.avatar as string | undefined
         })
       } else {
         setUser(null)
@@ -64,29 +57,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return unsubscribe
   }, [])
 
-  // Per PocketBase docs: use .then() not async/await so Safari doesn't block the popup
-  const signInWithGoogle = () => {
+  const signInWithGoogle = async () => {
     setError(null)
-    pb.collection('users')
-      .authWithOAuth2({ provider: 'google' })
-      .then((authData) => {
-        posthog?.capture('user_signed_up', {
-          provider: 'google',
-          is_new_user: authData.meta?.isNewRecord ?? false,
-        })
-      })
-      .catch((err) => {
-        console.error('Google sign-in error:', err)
-        const msg = err instanceof Error ? err.message : String(err)
-        if (msg.includes('oauth2') || msg.includes('providers')) {
-          const redirectHint = pocketbaseUrl.replace(/\/$/, '') + '/api/oauth2-redirect'
-          setError(
-            `Google OAuth not configured. PocketBase Admin → Collections → users → Options → OAuth2: enable Google. Google Cloud Console: add redirect URI ${redirectHint}`
-          )
-        } else {
-          setError(msg || 'Authentication failed')
-        }
-      })
+    try {
+      const authData = await pb.collection('users').listAuthMethods()
+
+      if (!authData?.oauth2?.providers) {
+        throw new Error('No OAuth providers available')
+      }
+
+      const provider = authData.oauth2.providers.find((p: { name: string }) => p.name === 'google')
+      if (!provider) throw new Error('Google provider not found')
+
+      localStorage.setItem('provider', JSON.stringify({
+        state: provider.state,
+        codeVerifier: provider.codeVerifier
+      }))
+
+      localStorage.setItem('redirectPath', location.pathname || '/')
+
+      const redirectUrl = `${window.location.origin}/oauth-callback`
+      window.location.href = `${provider.authURL}${encodeURIComponent(redirectUrl)}`
+    } catch (err) {
+      console.error('Google sign-in error:', err)
+      setError(err instanceof Error ? err.message : 'Authentication failed')
+    }
   }
 
   const signOut = async () => {
@@ -94,8 +89,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       pb.authStore.clear()
       setUser(null)
       navigate('/')
-    } catch (error) {
-      console.error('Sign-out error:', error)
+    } catch (err) {
+      console.error('Sign-out error:', err)
     }
   }
 
