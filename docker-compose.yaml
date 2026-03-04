@@ -18,9 +18,9 @@ services:
     image: ghcr.io/muchobien/pocketbase:latest
     container_name: pocketbase
     restart: unless-stopped
-    # Port needed for Coolify to route pb_goldfisch.iwishihadthis.com. Use 18090:8090 if 8090 conflicts.
-    ports:
-      - "${POCKETBASE_PORT:-8090}:8090"
+    # No port mapping - frontend proxies /pb/ internally. Use external PB (pb_goldfisch.iwishihadthis.com) if separate.
+    expose:
+      - "8090"
     volumes:
       - ./pb_data:/pb_data
       - ./pb_migrations:/pb_migrations
