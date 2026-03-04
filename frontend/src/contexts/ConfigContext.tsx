@@ -7,9 +7,13 @@ interface Config {
 const ConfigContext = createContext<Config | null>(null)
 
 export function ConfigProvider({ children }: { children: React.ReactNode }) {
-  // Always use same-origin proxy to avoid CORS - backend proxies /api/pb to PocketBase
+  // Per PocketBase docs: use PocketBase server URL directly for OAuth2 (redirect must be yourdomain.com/api/oauth2-redirect)
+  // Fall back to same-origin proxy when VITE_POCKETBASE_URL not set (e.g. local dev)
   const config: Config = {
-    pocketbaseUrl: typeof window !== 'undefined' ? `${window.location.origin}/api/pb` : '/api/pb',
+    pocketbaseUrl:
+      typeof window !== 'undefined' && import.meta.env.VITE_POCKETBASE_URL
+        ? import.meta.env.VITE_POCKETBASE_URL
+        : `${typeof window !== 'undefined' ? window.location.origin : ''}/api/pb`,
   }
 
   return (

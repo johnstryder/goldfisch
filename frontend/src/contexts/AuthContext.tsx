@@ -64,14 +64,11 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return unsubscribe
   }, [])
 
-  // Use .then() instead of async/await so Safari doesn't block the popup (PocketBase docs)
+  // Per PocketBase docs: use .then() not async/await so Safari doesn't block the popup
   const signInWithGoogle = () => {
     setError(null)
     pb.collection('users')
-      .authWithOAuth2({
-        provider: 'google',
-        createData: { emailVisibility: true },
-      })
+      .authWithOAuth2({ provider: 'google' })
       .then((authData) => {
         posthog?.capture('user_signed_up', {
           provider: 'google',
@@ -82,8 +79,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
         console.error('Google sign-in error:', err)
         const msg = err instanceof Error ? err.message : String(err)
         if (msg.includes('oauth2') || msg.includes('providers')) {
+          const redirectHint = pocketbaseUrl.replace(/\/$/, '') + '/api/oauth2-redirect'
           setError(
-            'Google OAuth is not configured. Check PocketBase: Collections → users → Options → OAuth2 has Google enabled with Client ID & Secret. Also ensure the backend POCKETBASE_URL points to the correct instance.'
+            `Google OAuth not configured. PocketBase Admin → Collections → users → Options → OAuth2: enable Google. Google Cloud Console: add redirect URI ${redirectHint}`
           )
         } else {
           setError(msg || 'Authentication failed')

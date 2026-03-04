@@ -1,20 +1,17 @@
 # Google OAuth Troubleshooting
 
-The app uses PocketBase's **popup OAuth flow** (`authWithOAuth2`). A popup opens for Google sign-in; no custom redirect page is needed.
+The app uses PocketBase's **popup OAuth flow** (`authWithOAuth2`) per [PocketBase docs](https://pocketbase.io/docs/authentication/#oauth2-integration). A popup opens for Google sign-in; no custom redirect page is needed.
 
-## 1. Verify PocketBase URL and proxy
+## 1. Use PocketBase URL directly (recommended)
 
-The frontend uses same-origin requests to `/api/pb/*`; the backend proxies to PocketBase.
+Per PocketBase docs, the client must point to the **PocketBase server URL** so the redirect URI matches.
 
-**In Coolify** (runtime env vars for the backend):
+**Set `VITE_POCKETBASE_URL`** in your frontend env (e.g. Coolify runtime vars):
 
-- Set `POCKETBASE_URL=https://pb_goldfisch.iwishihadthis.com`
-- The backend must be able to reach this URL (outbound HTTPS from the backend container)
+- Production: `VITE_POCKETBASE_URL=https://pb_goldfisch.iwishihadthis.com`
+- Local: `VITE_POCKETBASE_URL=http://127.0.0.1:8090`
 
-**If you get 500 on `/api/pb/...`**: Check backend logs for "PocketBase proxy error". Common causes:
-- Backend cannot reach `POCKETBASE_URL` (network/DNS)
-- Wrong or missing `POCKETBASE_URL`
-- **UNABLE_TO_VERIFY_LEAF_SIGNATURE**: TLS cert verification fails (incomplete chain in Docker). Set `POCKETBASE_INSECURE_TLS=1` in backend env to skip verification (use only if you trust the PocketBase host).
+When not set, the app falls back to the proxy (`/api/pb`). For OAuth2, direct connection is preferred.
 
 ## 2. Configure Google OAuth on the auth collection
 
@@ -33,6 +30,10 @@ OAuth is configured **per collection**, not globally.
    - For local testing: `http://127.0.0.1:8090/api/oauth2-redirect`
 3. Copy Client ID and Client Secret into PocketBase
 
-## 4. Auth collection name
+## 4. Proxy fallback (when VITE_POCKETBASE_URL not set)
 
-The app uses `users` by default. If your auth collection has a different name, you’d need to update `AuthContext.tsx` to use that collection.
+If using the proxy, the redirect URI is different: `https://goldfisch.iwishihadthis.com/api/pb/api/oauth2-redirect`. Add that to Google Cloud Console if you're not using direct connection.
+
+## 5. Auth collection name
+
+The app uses `users` by default. If your auth collection has a different name, update `AuthContext.tsx` to use that collection.
