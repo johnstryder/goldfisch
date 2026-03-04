@@ -81,7 +81,7 @@ export function OAuthCallback() {
   if (error) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="bg-background border border-destructive rounded-lg p-4 flex items-center gap-2 text-destructive">
+        <div className="bg-surface border border-danger rounded-lg p-4 flex items-center gap-2 text-danger">
           <AlertCircle className="w-5 h-5 flex-shrink-0" />
           <p>{error}</p>
         </div>
@@ -91,7 +91,7 @@ export function OAuthCallback() {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
-      <Loader2 className="w-12 h-12 text-indigo-400 animate-spin" />
+      <Loader2 className="w-12 h-12 text-primary animate-spin" />
     </div>
   )
 }

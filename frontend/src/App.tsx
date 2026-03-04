@@ -4,6 +4,7 @@ import { usePostHog } from 'posthog-js/react'
 import { ConfigProvider } from './contexts/ConfigContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
 import { OAuthCallback } from './components/OAuthCallback'
+import { Layout } from './components/Layout'
 import { Dashboard } from './pages/Dashboard'
 import { SegmentationDashboard } from './pages/SegmentationDashboard'
 import { ClientScoring } from './pages/ClientScoring'
@@ -59,8 +60,8 @@ function AppContent() {
 
   if (auth.isLoading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-500" />
+      <div className="min-h-screen flex items-center justify-center bg-background">
+        <div className="animate-spin rounded-full h-12 w-12 border-2 border-primary border-t-transparent" />
       </div>
     )
   }
@@ -71,83 +72,60 @@ function AppContent() {
       <Route
         path="/"
         element={
-          <div className="min-h-screen bg-gray-50">
-            <nav className="bg-white border-b px-4 py-3 flex gap-4 items-center">
-              <Link to="/" className="font-bold text-lg">GoldFisch</Link>
-              <Link to="/dashboard" className="text-sm hover:underline">Dashboard</Link>
-              <Link to="/segmentation" className="text-sm hover:underline">Segmentation</Link>
-              <Link to="/scoring" className="text-sm hover:underline">Client Scoring</Link>
-              <Link to="/time-allocation" className="text-sm hover:underline">Time Allocation</Link>
-              <Link to="/onboarding" className="text-sm hover:underline">Data Onboarding</Link>
-              <Link to="/calendar" className="text-sm hover:underline">Calendar</Link>
-              <div className="ml-auto">
-                {auth.user ? (
-                  <button onClick={auth.signOut} className="text-sm text-gray-600 hover:underline">
-                    Sign Out
-                  </button>
-                ) : (
-                  <button
-                    onClick={auth.signInWithGoogle}
-                    className="px-3 py-1 bg-indigo-600 text-white rounded text-sm"
-                  >
-                    Sign in with Google
-                  </button>
-                )}
-              </div>
-            </nav>
-            <div className="p-4 max-w-4xl mx-auto">
-              <h1 className="text-3xl font-bold">GoldFisch Client Segmentation</h1>
-              <p className="text-gray-600 mt-2">80/20 Squared • Premier • Core • Drainy 80</p>
+          <Layout>
+            <div className="p-6 max-w-4xl">
+              <h1 className="text-2xl font-bold text-text">GoldFisch Client Segmentation</h1>
+              <p className="text-muted mt-2">80/20 Squared • Premier • Core • Drainy 80</p>
               {auth.user && (
-                <p className="mt-2 text-sm text-gray-500">Welcome, {auth.user.name || auth.user.email}</p>
+                <p className="mt-2 text-sm text-muted">Welcome, {auth.user.name || auth.user.email}</p>
               )}
-              {auth.error && <p className="mt-2 text-sm text-red-600">{auth.error}</p>}
+              {auth.error && <p className="mt-2 text-sm text-danger">{auth.error}</p>}
               <div className="mt-6 grid gap-4 md:grid-cols-2">
-                <div className="p-4 border rounded-lg bg-white">
-                  <h2 className="font-semibold">Quick Links</h2>
+                <div className="p-4 rounded-lg bg-surface border border-surface shadow-card">
+                  <h2 className="font-semibold text-text">Quick Links</h2>
                   <div className="mt-2 flex flex-wrap gap-2">
-                    <Link to="/segmentation" className="px-3 py-1 bg-indigo-100 rounded text-sm">
+                    <Link to="/segmentation" className="px-3 py-1.5 bg-primary/20 text-primary rounded-md text-sm hover:bg-primary/30">
                       Segmentation Dashboard
                     </Link>
-                    <Link to="/scoring" className="px-3 py-1 bg-indigo-100 rounded text-sm">
+                    <Link to="/scoring" className="px-3 py-1.5 bg-primary/20 text-primary rounded-md text-sm hover:bg-primary/30">
                       Client Scoring
                     </Link>
-                    <Link to="/time-allocation" className="px-3 py-1 bg-indigo-100 rounded text-sm">
+                    <Link to="/time-allocation" className="px-3 py-1.5 bg-primary/20 text-primary rounded-md text-sm hover:bg-primary/30">
                       Time Allocation
                     </Link>
                   </div>
                 </div>
-                <div className="p-4 border rounded-lg bg-white">
-                  <h2 className="font-semibold">Items Demo</h2>
+                <div className="p-4 rounded-lg bg-surface border border-surface shadow-card">
+                  <h2 className="font-semibold text-text">Items Demo</h2>
                   <div className="mt-2 flex gap-2">
                     <button
                       onClick={createItem}
                       disabled={loading}
-                      className="px-3 py-1 bg-black text-white rounded text-sm disabled:opacity-50"
+                      className="px-3 py-1.5 bg-primary text-primary-foreground rounded-md text-sm font-medium disabled:opacity-50 hover:opacity-90"
                     >
                       Create Item
                     </button>
                     <button
                       onClick={fetchItems}
                       disabled={loading}
-                      className="px-3 py-1 border rounded text-sm"
+                      className="px-3 py-1.5 bg-surface border border-muted/30 text-text rounded-md text-sm hover:bg-glass"
                     >
                       {loading ? 'Loading...' : 'Refresh'}
                     </button>
                   </div>
-                  <p className="mt-2 text-sm text-gray-500">{items.length} items</p>
+                  <p className="mt-2 text-sm text-muted">{items.length} items</p>
                 </div>
               </div>
             </div>
-          </div>
+          </Layout>
         }
       />
-      <Route path="/dashboard" element={<Dashboard />} />
-      <Route path="/segmentation" element={<SegmentationDashboard />} />
-      <Route path="/scoring" element={<ClientScoring />} />
-      <Route path="/time-allocation" element={<TimeAllocation />} />
-      <Route path="/onboarding" element={<DataOnboarding />} />
-      <Route path="/calendar" element={<Calendar />} />
+      <Route path="/dashboard" element={<Layout><Dashboard /></Layout>} />
+      <Route path="/segmentation" element={<Layout><SegmentationDashboard /></Layout>} />
+      <Route path="/scoring" element={<Layout><ClientScoring /></Layout>} />
+      <Route path="/time-allocation" element={<Layout><TimeAllocation /></Layout>} />
+      <Route path="/onboarding" element={<Layout><DataOnboarding /></Layout>} />
+      <Route path="/calendar" element={<Layout><Calendar /></Layout>} />
     </Routes>
   )
 }

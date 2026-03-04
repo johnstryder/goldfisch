@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { createContext, useContext } from 'react'
 
 interface Config {
   pocketbaseUrl: string
@@ -7,30 +7,13 @@ interface Config {
 const ConfigContext = createContext<Config | null>(null)
 
 export function ConfigProvider({ children }: { children: React.ReactNode }) {
-  const [config, setConfig] = useState<Config | null>(null)
-  const [error, setError] = useState<string | null>(null)
-
-  useEffect(() => {
-    fetch('/api/config')
-      .then((res) => res.json())
-      .then((data) => setConfig({ pocketbaseUrl: data.pocketbaseUrl || 'http://localhost:8090' }))
-      .catch((err) => {
-        console.error('Failed to load config:', err)
-        setError(err.message)
-        setConfig({ pocketbaseUrl: 'http://localhost:8090' })
-      })
-  }, [])
-
-  if (config === null && !error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-50">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500" />
-      </div>
-    )
+  // Always use same-origin proxy to avoid CORS - backend proxies /api/pb to PocketBase
+  const config: Config = {
+    pocketbaseUrl: typeof window !== 'undefined' ? `${window.location.origin}/api/pb` : '/api/pb',
   }
 
   return (
-    <ConfigContext.Provider value={config ?? { pocketbaseUrl: 'http://localhost:8090' }}>
+    <ConfigContext.Provider value={config}>
       {children}
     </ConfigContext.Provider>
   )

@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 
 type Client = { id: string; name: string; revenue: number; score: number }
 type SegmentationResult = { premier: Client[]; core: Client[]; drainy80: Client[] }
@@ -42,62 +41,54 @@ export function SegmentationDashboard() {
   }, [])
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b px-4 py-3 flex gap-4">
-        <Link to="/" className="font-bold">GoldFisch</Link>
-        <Link to="/segmentation">Segmentation</Link>
-        <Link to="/scoring">Client Scoring</Link>
-        <Link to="/time-allocation">Time Allocation</Link>
-      </nav>
-      <div className="p-6">
-        <h1 className="text-2xl font-bold">80/20 Squared Segmentation</h1>
-        <p className="text-gray-600 mt-2">Premier (4%) • Core (16%) • Drainy 80 (80%)</p>
-        <button
-          onClick={() => runSegmentation(clients.length > 0 ? clients : sampleClients)}
-          disabled={loading}
-          className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50"
-        >
-          {loading ? 'Running...' : 'Run Segmentation'}
-        </button>
-        {result && (
-          <div className="mt-6 grid gap-4 md:grid-cols-3">
-            <div className="p-4 border rounded-lg bg-green-50">
-              <h3 className="font-semibold text-green-800">Premier (Top 4%)</h3>
-              <p className="text-sm text-green-600 mt-1">Target Revenue: 60-65%</p>
-              <div className="mt-2 space-y-1">
-                {result.premier.map((c) => (
-                  <div key={c.id} className="flex justify-between text-sm">
-                    <span>{c.name}</span>
-                    <span>${(c.revenue / 1000).toFixed(0)}k</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="p-4 border rounded-lg bg-amber-50">
-              <h3 className="font-semibold text-amber-800">Core (Next 16%)</h3>
-              <div className="mt-2 space-y-1">
-                {result.core.map((c) => (
-                  <div key={c.id} className="flex justify-between text-sm">
-                    <span>{c.name}</span>
-                    <span>${(c.revenue / 1000).toFixed(0)}k</span>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="p-4 border rounded-lg bg-red-50">
-              <h3 className="font-semibold text-red-800">Drainy 80 (Bottom 80%)</h3>
-              <div className="mt-2 space-y-1">
-                {result.drainy80.map((c) => (
-                  <div key={c.id} className="flex justify-between text-sm">
-                    <span>{c.name}</span>
-                    <span>${(c.revenue / 1000).toFixed(0)}k</span>
-                  </div>
-                ))}
-              </div>
+    <div className="p-6">
+      <h1 className="text-2xl font-bold text-text">80/20 Squared Segmentation</h1>
+      <p className="text-muted mt-2">Premier (4%) • Core (16%) • Drainy 80 (80%)</p>
+      <button
+        onClick={() => runSegmentation(clients.length > 0 ? clients : sampleClients)}
+        disabled={loading}
+        className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md font-medium disabled:opacity-50 hover:opacity-90"
+      >
+        {loading ? 'Running...' : 'Run Segmentation'}
+      </button>
+      {result && (
+        <div className="mt-6 grid gap-4 md:grid-cols-3">
+          <div className="p-4 rounded-lg border border-tier-premier/30 bg-tier-premier/10 shadow-card">
+            <h3 className="font-semibold text-tier-premier">Premier (Top 4%)</h3>
+            <p className="text-sm text-muted mt-1">Target Revenue: 60-65%</p>
+            <div className="mt-2 space-y-1">
+              {result.premier.map((c) => (
+                <div key={c.id} className="flex justify-between text-sm text-text">
+                  <span>{c.name}</span>
+                  <span>${(c.revenue / 1000).toFixed(0)}k</span>
+                </div>
+              ))}
             </div>
           </div>
-        )}
-      </div>
+          <div className="p-4 rounded-lg border border-tier-core/30 bg-tier-core/10 shadow-card">
+            <h3 className="font-semibold text-tier-core">Core (Next 16%)</h3>
+            <div className="mt-2 space-y-1">
+              {result.core.map((c) => (
+                <div key={c.id} className="flex justify-between text-sm text-text">
+                  <span>{c.name}</span>
+                  <span>${(c.revenue / 1000).toFixed(0)}k</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="p-4 rounded-lg border border-tier-drainy/30 bg-tier-drainy/10 shadow-card">
+            <h3 className="font-semibold text-tier-drainy">Drainy 80 (Bottom 80%)</h3>
+            <div className="mt-2 space-y-1">
+              {result.drainy80.map((c) => (
+                <div key={c.id} className="flex justify-between text-sm text-text">
+                  <span>{c.name}</span>
+                  <span>${(c.revenue / 1000).toFixed(0)}k</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

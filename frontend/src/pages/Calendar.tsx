@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { useAuth } from '../contexts/AuthContext'
 
 type CalendarEvent = {
@@ -19,7 +18,7 @@ export function Calendar() {
   const [error, setError] = useState<string | null>(null)
   const [connecting, setConnecting] = useState(false)
 
-  const apiBase = '/api' // Proxied to backend
+  const apiBase = '/api'
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search)
@@ -113,72 +112,65 @@ export function Calendar() {
   }, [auth.user, token, connected])
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <nav className="bg-white border-b px-4 py-3 flex gap-4">
-        <Link to="/" className="font-bold">GoldFisch</Link>
-        <Link to="/segmentation">Segmentation</Link>
-        <Link to="/calendar">Calendar</Link>
-      </nav>
-      <div className="p-6 max-w-2xl">
-        <h1 className="text-2xl font-bold">Google Calendar</h1>
-        <p className="text-gray-600 mt-2">Connect your Google Calendar to view events</p>
+    <div className="p-6 max-w-2xl">
+      <h1 className="text-2xl font-bold text-text">Google Calendar</h1>
+      <p className="text-muted mt-2">Connect your Google Calendar to view events</p>
 
-        {!auth.user ? (
-          <p className="mt-4 text-amber-600">Sign in with Google to connect your calendar.</p>
-        ) : (
-          <>
-            {error && (
-              <div className="mt-4 p-3 bg-red-50 text-red-700 rounded">{error}</div>
-            )}
-            {connected === false && (
+      {!auth.user ? (
+        <p className="mt-4 text-warning">Sign in with Google to connect your calendar.</p>
+      ) : (
+        <>
+          {error && (
+            <div className="mt-4 p-3 bg-danger/20 text-danger rounded-md">{error}</div>
+          )}
+          {connected === false && (
+            <button
+              onClick={connectCalendar}
+              disabled={connecting}
+              className="mt-4 px-4 py-2 bg-primary text-primary-foreground rounded-md font-medium disabled:opacity-50 hover:opacity-90"
+            >
+              {connecting ? 'Connecting...' : 'Connect Google Calendar'}
+            </button>
+          )}
+          {connected && (
+            <div className="mt-4">
               <button
-                onClick={connectCalendar}
-                disabled={connecting}
-                className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50"
+                onClick={fetchEvents}
+                disabled={loading}
+                className="px-4 py-2 bg-primary text-primary-foreground rounded-md font-medium disabled:opacity-50 hover:opacity-90"
               >
-                {connecting ? 'Connecting...' : 'Connect Google Calendar'}
+                {loading ? 'Loading...' : 'Refresh Events'}
               </button>
-            )}
-            {connected && (
-              <div className="mt-4">
-                <button
-                  onClick={fetchEvents}
-                  disabled={loading}
-                  className="px-4 py-2 bg-indigo-600 text-white rounded disabled:opacity-50"
-                >
-                  {loading ? 'Loading...' : 'Refresh Events'}
-                </button>
-                <div className="mt-4 space-y-2">
-                  {events.map((evt) => (
-                    <div
-                      key={evt.id}
-                      className="p-3 border rounded-lg bg-white"
-                    >
-                      <div className="font-medium">{evt.summary}</div>
-                      <div className="text-sm text-gray-500">
-                        {new Date(evt.start).toLocaleString()} – {new Date(evt.end).toLocaleString()}
-                      </div>
-                      {evt.htmlLink && (
-                        <a
-                          href={evt.htmlLink}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-sm text-indigo-600 hover:underline"
-                        >
-                          Open in Calendar
-                        </a>
-                      )}
+              <div className="mt-4 space-y-2">
+                {events.map((evt) => (
+                  <div
+                    key={evt.id}
+                    className="p-3 rounded-lg bg-surface border border-surface shadow-card"
+                  >
+                    <div className="font-medium text-text">{evt.summary}</div>
+                    <div className="text-sm text-muted">
+                      {new Date(evt.start).toLocaleString()} – {new Date(evt.end).toLocaleString()}
                     </div>
-                  ))}
-                  {events.length === 0 && !loading && (
-                    <p className="text-gray-500">No upcoming events</p>
-                  )}
-                </div>
+                    {evt.htmlLink && (
+                      <a
+                        href={evt.htmlLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-sm text-primary hover:underline"
+                      >
+                        Open in Calendar
+                      </a>
+                    )}
+                  </div>
+                ))}
+                {events.length === 0 && !loading && (
+                  <p className="text-muted">No upcoming events</p>
+                )}
               </div>
-            )}
-          </>
-        )}
-      </div>
+            </div>
+          )}
+        </>
+      )}
     </div>
   )
 }
