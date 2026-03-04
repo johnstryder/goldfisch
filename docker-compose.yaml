@@ -18,7 +18,9 @@ services:
     image: ghcr.io/muchobien/pocketbase:latest
     container_name: pocketbase
     restart: unless-stopped
-    # No port mapping - frontend proxies /pb/ to pocketbase internally
+    # Port needed for Coolify to route pb_goldfisch.iwishihadthis.com. Use 18090:8090 if 8090 conflicts.
+    ports:
+      - "${POCKETBASE_PORT:-8090}:8090"
     volumes:
       - ./pb_data:/pb_data
       - ./pb_migrations:/pb_migrations
@@ -45,7 +47,7 @@ services:
     environment:
       - NODE_ENV=production
       - PORT=8000
-      - POCKETBASE_URL=http://pocketbase:8090
+      - POCKETBASE_URL=${POCKETBASE_URL:-http://pocketbase:8090}
       - FRONTEND_URL=http://localhost:3000
       - DRAGONFLY_URL=redis://redis:6379
       - POSTHOG_API_KEY=${POSTHOG_API_KEY:-}
