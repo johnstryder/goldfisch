@@ -20,10 +20,12 @@ POCKETBASE_PORT=18090
 ```
 POCKETBASE_URL=https://pb_goldfisch.iwishihadthis.com
 FRONTEND_URL=https://goldfisch.iwishihadthis.com
-VITE_POCKETBASE_URL=https://pb_goldfisch.iwishihadthis.com
+# or SERVICE_URL_FRONTEND for Coolify
 ```
 
-**POCKETBASE_URL** is read by the backend and exposed via `/api/config`; the frontend fetches it at runtime. No build-time vars needed.
+**POCKETBASE_URL** – Backend proxies PocketBase API through `/api/pb/*` to avoid CORS. The frontend uses the proxy URL (same origin).
+
+**FRONTEND_URL** or **SERVICE_URL_FRONTEND** – Used to build the proxy URL in `/api/config`.
 
 ## If PocketBase is a separate Coolify app
 

@@ -43,7 +43,7 @@ const pb = new PocketBase(process.env.POCKETBASE_URL || 'http://localhost:8090')
 
 // Middleware
 app.use('*', cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+  origin: process.env.FRONTEND_URL || process.env.SERVICE_URL_FRONTEND || 'http://localhost:3000',
   allowHeaders: ['Content-Type', 'Authorization'],
   allowMethods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
 }))
@@ -55,9 +55,10 @@ app.get('/health', (c) => {
 
 // Runtime config for frontend (PocketBase URL etc.)
 app.get('/api/config', (c) => {
-  return c.json({
-    pocketbaseUrl: process.env.POCKETBASE_URL || 'http://localhost:8090',
-  })
+  const frontendUrl = process.env.FRONTEND_URL || process.env.SERVICE_URL_FRONTEND || 'http://localhost:3000'
+  // Use proxy URL to avoid CORS when PocketBase is on a different domain
+  const pocketbaseUrl = `${frontendUrl.replace(/\/$/, '')}/api/pb`
+  return c.json({ pocketbaseUrl })
 })
 
 // API routes
@@ -292,32 +293,35 @@ app.get('/api/calendar/status', requireAuth, async (c) => {
   return c.json({ connected: !!tokens })
 })
 
-// PocketBase proxy for admin operations
-app.all('/pb/*', async (c) => {
-  const path = c.req.path.replace('/pb', '')
+// PocketBase API proxy - avoids CORS when PocketBase is on a different domain
+app.all('/api/pb/*', async (c) => {
+  const path = c.req.path.replace(/^\/api\/pb/, '') || '/'
+  const targetPath = path.startsWith('/') ? path : `/${path}`
+  const url = `${(process.env.POCKETBASE_URL || 'http://localhost:8090').replace(/\/$/, '')}${targetPath}`
   const method = c.req.method
 
   try {
-    // Forward the request to PocketBase
-    const url = `${process.env.POCKETBASE_URL || 'http://localhost:8090'}${path}`
-    const headers = new Headers(c.req.raw.headers)
+    const headers = new Headers()
+    c.req.raw.headers.forEach((v, k) => {
+      if (!['host', 'connection'].includes(k.toLowerCase())) {
+        headers.set(k, v)
+      }
+    })
 
-    let body
+    let body: string | undefined
     if (method !== 'GET' && method !== 'HEAD') {
       body = await c.req.text()
     }
 
-    const response = await fetch(url, {
-      method,
-      headers,
-      body,
-    })
-
+    const response = await fetch(url, { method, headers, body })
     const responseBody = await response.text()
-    return new Response(responseBody, {
-      status: response.status,
-      headers: response.headers,
+    const resHeaders = new Headers()
+    response.headers.forEach((v, k) => {
+      if (!['content-encoding', 'transfer-encoding'].includes(k.toLowerCase())) {
+        resHeaders.set(k, v)
+      }
     })
+    return new Response(responseBody, { status: response.status, headers: resHeaders })
   } catch (error) {
     console.error('PocketBase proxy error:', error)
     return c.json({ error: 'Proxy error' }, 500)
