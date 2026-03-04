@@ -1,0 +1,41 @@
+{
+  "feature_file": "time_allocation_calculator.feature",
+  "data_providers": [
+    "Auth",
+    "Database",
+    "Client Segmentation Data",
+    "Revenue Formulas",
+    "Advisor Profile Fixture",
+    "Market Force Multipliers",
+    "Capacity Calculation Engine"
+  ],
+  "services": [
+    "analytics_api",
+    "advisor_service",
+    "forecasting_engine",
+    "segmentation_service",
+    "valuation_calculator"
+  ],
+  "components": [
+    "time_allocation_modeling_dashboard",
+    "linked_multi_sliders",
+    "max_effectiveness_toggle",
+    "impact_scorecard",
+    "diverging_bar_chart",
+    "manual_workload_slider",
+    "split_comparison_bar",
+    "action_oriented_cards",
+    "growth_forecasting_section",
+    "valuation_multiplier_meter",
+    "overlay_projected_layer",
+    "incremental_step_chart",
+    "growth_curve",
+    "variable_time_savers_panel",
+    "efficiency_progress_bars",
+    "tiered_growth_ribbon"
+  ],
+  "notes": {
+    "calculation_logic": "Complex dependency between multi-slider percentages and scorecard metrics.",
+    "real_time_updates": "UI components require real-time recalculation upon slider adjustments."
+  }
+}

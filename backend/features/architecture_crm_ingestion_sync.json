@@ -1,0 +1,35 @@
+{
+  "feature_file": "crm_ingestion_sync.feature",
+  "data_providers": [
+    "Salesforce API Mock",
+    "Wealthbox API Mock",
+    "Plaid API Mock",
+    "Database Fixture (Versioned Snapshots)",
+    "Rate Limiter",
+    "Priority Queue (BullMQ/RabbitMQ)",
+    "Webhook Provider",
+    "Transcription Service Mock"
+  ],
+  "services": [
+    "crm_integration_service",
+    "auto_detect_schema_engine",
+    "priority_queue_manager",
+    "scoring_algorithm_service",
+    "rolling_rerank_service",
+    "shadow_record_manager",
+    "snapshot_capture_service",
+    "notification_service"
+  ],
+  "components": [
+    "integration_list",
+    "draggable_chips_metadata",
+    "conflict_resolution_modal",
+    "status_indicators",
+    "tiered_growth_ribbon",
+    "data_freshness_badge"
+  ],
+  "notes": {
+    "complex_flows": "Includes asynchronous transcription triggers and dynamic weight redistribution for scoring.",
+    "logic_focus": "Covers schema auto-detection, priority-based ingestion, conflict handling via shadow records, and rate limiting backoff."
+  }
+}

@@ -1,0 +1,39 @@
+{
+  "feature_file": "ai_enrichment_processing.feature",
+  "data_providers": [
+    "Auth",
+    "Database",
+    "Plaid API",
+    "Whisper API",
+    "Deepgram API",
+    "Email Provider API",
+    "Priority Queue",
+    "Shadow Records Store",
+    "CRM System",
+    "CSV Ingestion Service"
+  ],
+  "services": [
+    "asynchronous_transcription_service",
+    "ai_enrichment_engine",
+    "scoring_algorithm_service",
+    "rolling_re_rank_service",
+    "dynamic_weight_redistribution_service",
+    "webhook_handler",
+    "auto_detect_schema_service",
+    "snapshot_event_bus"
+  ],
+  "components": [
+    "dashboard",
+    "glow_sidebar",
+    "sentiment_chip_tags",
+    "subtraction_badge",
+    "status_indicators",
+    "conflict_resolution_modal",
+    "split_screen_diff_viewer",
+    "stacked_micro_bars"
+  ],
+  "notes": {
+    "metrics": "Tracks Respect for Time, Hidden Potential, and Revenue/Referral weighting",
+    "tier_logic": "Handles Core, Premier, and Drainy 80 prioritizations"
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "feature_file": "data_onboarding_wizard.feature",
+  "data_providers": [
+    "Auth",
+    "Database",
+    "Salesforce CRM",
+    "Wealthbox CRM",
+    "Plaid API",
+    "Email Service",
+    "OAuth Provider",
+    "CSV Data Fixtures",
+    "Shadow Records Cache",
+    "Priority Queue State"
+  ],
+  "services": [
+    "auth_service",
+    "onboarding_api",
+    "integration_service",
+    "schema_detection_engine",
+    "mapping_persistence_service",
+    "scoring_algorithm_engine",
+    "conflict_resolution_service",
+    "segmentation_service",
+    "sync_orchestrator"
+  ],
+  "components": [
+    "dashboard_centric_hub",
+    "integration_list",
+    "integration_card",
+    "status_indicator",
+    "guided_step_through_wizard",
+    "draggable_chips",
+    "drop_zones",
+    "conflict_resolution_modal",
+    "split_screen_diff",
+    "csv_upload_wizard",
+    "notification_toast",
+    "progress_bar"
+  ],
+  "notes": {
+    "logic_complexities": [
+      "Dynamic Weight Re-distribution logic for incomplete profiles",
+      "Rolling Re-rank algorithm triggers",
+      "Priority Queue synchronization order (Premier clients first)"
+    ]
+  }
+}

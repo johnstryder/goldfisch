@@ -1,0 +1,40 @@
+{
+  "feature_file": "drainy_80_operationalization.feature",
+  "data_providers": [
+    "Auth",
+    "Database",
+    "GoldFisch System",
+    "80/20 Squared Engine",
+    "Workload Analysis Analytics",
+    "Client Profile Fixtures",
+    "Recommendation Engine",
+    "Efficiency Metrics Calculator"
+  ],
+  "services": [
+    "operationalization_api",
+    "segmentation_service",
+    "automation_workflow_engine",
+    "capacity_planning_service",
+    "notification_service"
+  ],
+  "components": [
+    "operationalization_dashboard",
+    "action_oriented_cards",
+    "service_model_list",
+    "client_portal_module",
+    "workload_analysis_section",
+    "split_comparison_bar",
+    "efficiency_progress_bar",
+    "management_view",
+    "comparison_toggle",
+    "recovered_capacity_scorecard",
+    "impact_scorecard",
+    "diverging_bar_chart",
+    "valuation_multiplier_meter",
+    "client_status_badge",
+    "manual_override_control"
+  ],
+  "notes": {
+    "logic_dependencies": "Calculations for 'Estimated Hours Saved' and 'Recovered Capacity' require a variable time-savers logic provider."
+  }
+}

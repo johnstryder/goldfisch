@@ -1,0 +1,39 @@
+{
+  "feature_file": "growth_forecasting_engine.feature",
+  "data_providers": [
+    "Auth",
+    "Database",
+    "Segmentation Fixtures",
+    "Forecasting Snapshots",
+    "Valuation Multiplier Config",
+    "Metric Benchmarks",
+    "Automation Efficiency Models"
+  ],
+  "services": [
+    "forecasting_engine",
+    "capacity_displacement_service",
+    "segmentation_service",
+    "valuation_service",
+    "analytics_api",
+    "reporting_service",
+    "automation_operationalizer"
+  ],
+  "components": [
+    "incremental_step_chart",
+    "valuation_multiplier_meter",
+    "confidence_gauges",
+    "compounded_roi_matrix",
+    "growth_curve_visualization",
+    "impact_scorecard",
+    "tiered_growth_ribbon",
+    "stacked_glass_pillars",
+    "efficiency_progress_bars",
+    "comparison_toggle",
+    "overlay_projected_layer"
+  ],
+  "notes": {
+    "calculation_logic": "Includes logic for compounding ROI, risk penalty weighting, and time displacement reallocations.",
+    "state_management": "Requires snapshotting for versioned forecasts and comparison states.",
+    "visualization_types": "The system relies heavily on specific data series for charting components like ribbons, pillars, and curves."
+  }
+}

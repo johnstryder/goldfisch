@@ -1,0 +1,42 @@
+{
+  "feature_file": "roi_visualizations.feature",
+  "data_providers": [
+    "Auth",
+    "Database",
+    "Client Segmentation Engine",
+    "Financial Models Fixture",
+    "Historical Referral Data",
+    "ROI Forecasting Engine",
+    "Valuation Multiplier Service",
+    "Revenue Projections Mock"
+  ],
+  "services": [
+    "api",
+    "auth_service",
+    "segmentation_service",
+    "forecasting_service",
+    "analytics_engine"
+  ],
+  "components": [
+    "navigation_sidebar",
+    "roi_growth_dashboard",
+    "diverging_bar_chart",
+    "stacked_glass_pillars",
+    "what_if_toggle",
+    "new_premier_clients_slider",
+    "overlay_projected_layer",
+    "linked_multi_sliders",
+    "impact_scorecard",
+    "efficiency_progress_bars",
+    "referral_probability_slider",
+    "forecast_timeline_selector",
+    "growth_curve_visualization",
+    "confidence_gauge",
+    "valuation_multiplier_meter",
+    "tiered_growth_ribbon"
+  ],
+  "notes": {
+    "real_time_updates": "Scorecard and Progress Bars require state management validation during slider interaction",
+    "visual_testing": "Requires visual regression testing for complex charts (Diverging Bar, Glass Pillars, Growth Curves)"
+  }
+}

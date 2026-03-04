@@ -1,0 +1,41 @@
+{
+  "name": "tezzemplate-backend",
+  "version": "1.0.2",
+  "description": "Backend API with Hono and PocketBase",
+  "main": "dist/index.js",
+  "type": "module",
+  "scripts": {
+    "dev": "bun --hot run src/index.ts",
+    "build": "bun build src/index.ts --outdir dist --target node",
+    "start": "bun dist/index.js",
+    "test": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@hono/node-server": "^1.8.0",
+    "axios": "^1.6.0",
+    "connect-redis": "^7.1.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.0",
+    "express-session": "^1.17.3",
+    "hono": "^4.0.0",
+    "pocketbase": "^0.21.0",
+    "posthog-node": "^4.0.0",
+    "redis": "^4.6.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.0",
+    "@types/express-session": "^1.17.0",
+    "@types/jest": "^30.0.0",
+    "@types/node": "^20.10.0",
+    "bun-types": "^1.0.0",
+    "jest": "^30.2.0",
+    "jest-cucumber": "^4.5.0",
+    "typescript": "^5.3.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

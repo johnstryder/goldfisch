@@ -1,0 +1,41 @@
+{
+  "feature_file": "scenario_persistence.feature",
+  "data_providers": [
+    "PostgreSQL Database",
+    "Plaid Data Feed",
+    "Auth",
+    "Segmentation Config",
+    "Client Portfolio Fixtures",
+    "Snapshot Store",
+    "Cold Storage",
+    "Audit Log Collector"
+  ],
+  "services": [
+    "segmentation_engine",
+    "forecasting_service",
+    "snapshot_api",
+    "audit_logs_service",
+    "cleanup_worker",
+    "client_metadata_service"
+  ],
+  "components": [
+    "growth_forecasting_module",
+    "max_effectiveness_sliders",
+    "tier_distribution_shift_visualization",
+    "compounded_roi_matrix",
+    "tiered_growth_ribbon_visualization"
+  ],
+  "notes": {
+    "persistence_tables": [
+      "scenario_snapshots",
+      "tier_history",
+      "client_metadata",
+      "audit_logs"
+    ],
+    "triggers": [
+      "Revenue_Increase",
+      "Manual_Override",
+      "Retention_Threshold"
+    ]
+  }
+}

@@ -1,0 +1,139 @@
+{
+  "tokens": {
+    "color": {
+      "background": "#0f172a",
+      "danger": "#ef4444",
+      "glass": "rgba(255, 255, 255, 0.1)",
+      "muted": "#94a3b8",
+      "primary": "#d4af37",
+      "secondary": "#1e293b",
+      "success": "#22c55e",
+      "surface": "#1e293b",
+      "text": "#f8fafc",
+      "tier_core": "#60a5fa",
+      "tier_drainy": "#94a3b8",
+      "tier_premier": "#fbbf24",
+      "warning": "#f59e0b"
+    },
+    "radius": {
+      "full": "999px",
+      "lg": "12px",
+      "md": "8px",
+      "sm": "4px"
+    },
+    "shadow": {
+      "card": "0 4px 6px -1px rgb(0 0 0 / 0.1)",
+      "glow": "0 0 15px rgba(212, 175, 55, 0.5)"
+    },
+    "spacing": {
+      "lg": "24px",
+      "md": "16px",
+      "sm": "8px",
+      "xl": "32px",
+      "xs": "4px"
+    },
+    "typography": {
+      "base_size": "16px",
+      "font_family": "Inter, system-ui, sans-serif",
+      "scale": "1.25",
+      "weight_bold": "700",
+      "weight_medium": "500",
+      "weight_normal": "400"
+    }
+  },
+  "components": {
+    "client_list": {
+      "detailed_score_access": "tooltip_hover",
+      "penalty_indicator": "subtraction_badge",
+      "potential_indicator": "highlight_row"
+    },
+    "dashboard": {
+      "layout": "dashboard_centric_hub",
+      "navigation_split": [
+        "strategic_modeling",
+        "daily_operations"
+      ],
+      "sidebar": "glow_sidebar"
+    },
+    "data_management": {
+      "ai_signals": "sentiment_chip_tags",
+      "conflict_resolution": "split_screen_diff_modal",
+      "field_mapping": "draggable_chips",
+      "integration_format": "integration_list",
+      "schema_onboarding": "guided_step_through",
+      "sync_status": "status_indicators",
+      "transcription_review": "highlight_snippets"
+    },
+    "operational_tools": {
+      "automation_toggle": "comparison_toggle",
+      "scenario_controls": "linked_multi_sliders",
+      "service_model_recommendations": "action_oriented_cards",
+      "time_comparison": "split_comparison_bar"
+    },
+    "scoring_input": {
+      "penalty_control": "toggle_switches",
+      "type": "iconic_sliders",
+      "visualization": "stacked_micro_bars"
+    },
+    "segmentation_engine": {
+      "client_transition": "drag_and_drop_kanban",
+      "manual_override_indicator": "iconic_badge",
+      "tier_definition": "draggable_bracket"
+    },
+    "visualizations": {
+      "capacity_efficiency": "efficiency_progress_bars",
+      "confidence_indicator": "confidence_gauges",
+      "growth_tracking": "tiered_growth_ribbon",
+      "impact_summary": "impact_scorecard",
+      "projected_layer": "overlay_projected_layer",
+      "revenue_dist_chart": "diverging_bar_chart",
+      "revenue_jump_projection": "incremental_step_chart",
+      "revenue_layers": "stacked_glass_pillars",
+      "roi_forecasting": "growth_curve",
+      "succession_value": "valuation_multiplier_meter",
+      "time_allocation": "impact_heatmap"
+    }
+  },
+  "decisions": [
+    {
+      "question": "How should the system visualize the 'Status Quo' vs. 'Max Effectiveness' time allocation comparison?",
+      "answer": "Impact Heatmap"
+    },
+    {
+      "question": "How should the user interface represent the 5-category scoring inputs?",
+      "answer": "Iconic Sliders"
+    },
+    {
+      "question": "How should the UI represent the probability or risk associated with projections?",
+      "answer": "Confidence Gauges"
+    },
+    {
+      "question": "What visual treatment should be applied to clients who have been manually 'Overridden'?",
+      "answer": "Iconic Badge"
+    },
+    {
+      "question": "How should the UI represent the recommended service model changes for low-ROI accounts?",
+      "answer": "Action-Oriented Cards"
+    },
+    {
+      "question": "How should the growth_forecasting engine visually differentiate between 'Confirmed' and 'Projected' revenue?",
+      "answer": "Stacked Glass Pillars"
+    },
+    {
+      "question": "How should the global navigation distinguish between modeling and operations?",
+      "answer": "Dashboard-Centric Hub"
+    },
+    {
+      "question": "What UI pattern should be used to display the detailed breakdown of the 5-category scoring?",
+      "answer": "Tooltip Hover"
+    },
+    {
+      "question": "How should the UI represent the comparison between manual workload and automated workflows?",
+      "answer": "Split Comparison Bar"
+    },
+    {
+      "question": "How should the advisor define the threshold values for the '80/20 Squared' segments?",
+      "answer": "Draggable Bracket"
+    }
+  ]
+}

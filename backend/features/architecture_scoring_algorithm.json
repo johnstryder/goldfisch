@@ -1,0 +1,37 @@
+{
+  "feature_file": "scoring_algorithm.feature",
+  "data_providers": [
+    "CRM",
+    "Plaid",
+    "Whisper Transcription Service",
+    "Asynchronous Transcription Service",
+    "Database",
+    "Penalty Multipliers",
+    "Weighted Categories Fixture",
+    "Sentiment Tags",
+    "Shadow Records",
+    "Book of Business Fixture",
+    "Snapshot Service"
+  ],
+  "services": [
+    "scoring_engine",
+    "client_service",
+    "tier_management_service",
+    "sentiment_analysis_service",
+    "conflict_resolution_service",
+    "versioning_service",
+    "crm_import_service"
+  ],
+  "components": [
+    "client_profile",
+    "subtraction_badge",
+    "conflict_resolution_modal",
+    "stacked_micro_bars",
+    "tier_distribution_dashboard",
+    "sentiment_chip_tags"
+  ],
+  "notes": {
+    "integrations": "External data sources include Plaid for external assets and Whisper for transcription analysis.",
+    "logic": "The scoring engine implements 80/20 squared segmentation with dynamic weight redistribution and penalty multipliers."
+  }
+}

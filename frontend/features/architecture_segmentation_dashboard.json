@@ -1,0 +1,42 @@
+{
+  "feature_file": "segmentation_dashboard.feature",
+  "data_providers": [
+    "Wealthbox CRM",
+    "Scoring Algorithm",
+    "Database",
+    "Auth",
+    "Client Segmentation logic",
+    "Rolling Re-rank Engine",
+    "Projected Valuation Service"
+  ],
+  "services": [
+    "crm_integration_api",
+    "scoring_service",
+    "segmentation_api",
+    "analytics_service"
+  ],
+  "components": [
+    "segmentation_engine_dashboard",
+    "kanban_layout",
+    "tier_column",
+    "draggable_chip",
+    "efficiency_progress_bar",
+    "threshold_bracket",
+    "incremental_step_chart",
+    "iconic_badge",
+    "tooltip",
+    "conflict_resolution_modal",
+    "status_badge",
+    "tiered_growth_ribbon",
+    "stacked_micro_bars",
+    "subtraction_badge",
+    "penalty_toggle_switch",
+    "action_oriented_card",
+    "split_comparison_bar"
+  ],
+  "notes": {
+    "complex_scoring": "Client data needs specific 5-category breakdown and penalty flags",
+    "drag_and_drop": "Core interaction pattern for threshold brackets and client chips",
+    "real_time": "Requires state management for immediate UI updates during re-ranking"
+  }
+}

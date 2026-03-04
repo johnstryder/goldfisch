@@ -1,0 +1,38 @@
+{
+  "feature_file": "segmentation_engine.feature",
+  "data_providers": [
+    "Wealthbox CRM API",
+    "Database",
+    "Asynchronous Transcription Service",
+    "Auth",
+    "Client Fixtures",
+    "Segmentation Logic Weights",
+    "Event Bus",
+    "State Snapshot Store"
+  ],
+  "services": [
+    "segmentation_engine",
+    "crm_integration_service",
+    "scoring_algorithm_service",
+    "analytics_api",
+    "transcription_processor",
+    "notification_service"
+  ],
+  "components": [
+    "dashboard",
+    "stacked_micro_bars",
+    "draggable_bracket_control",
+    "diverging_bar_chart",
+    "status_badge_ui",
+    "client_profile_view",
+    "manual_override_modal"
+  ],
+  "notes": {
+    "integration_points": [
+      "Wealthbox CRM",
+      "Asynchronous Transcription"
+    ],
+    "logic_type": "80/20 Squared Revenue-Weighted Thresholds",
+    "persistence_strategy": "Snapshot-based historical tracking"
+  }
+}

@@ -1,0 +1,46 @@
+{
+  "feature_file": "client_scoring_ui.feature",
+  "data_providers": [
+    "Auth",
+    "Database",
+    "Client Profile Data",
+    "Scoring Weights Config",
+    "Penalty Multipliers",
+    "Tier Thresholds",
+    "Email Integration Service",
+    "Cache"
+  ],
+  "services": [
+    "auth_service",
+    "scoring_engine",
+    "client_management_service",
+    "notification_service",
+    "portfolio_aggregation_service"
+  ],
+  "components": [
+    "login_form",
+    "dashboard",
+    "client_profile_page",
+    "scoring_section",
+    "iconic_slider",
+    "stacked_micro_bars",
+    "score_breakdown_component",
+    "tooltip_hover",
+    "penalty_switch",
+    "subtraction_badge",
+    "overall_score_indicator",
+    "tier_indicator",
+    "visibility_icon",
+    "status_indicator",
+    "notification_banner",
+    "client_scorecard",
+    "override_modal",
+    "tier_dropdown",
+    "iconic_badge",
+    "global_portfolio_view"
+  ],
+  "notes": {
+    "dynamic_behavior": "The architecture must support real-time recalculations and UI state transitions like color shifts and bar expansions.",
+    "integrations": "Includes a mockable email integration for data completeness scenarios."
+  }
+}

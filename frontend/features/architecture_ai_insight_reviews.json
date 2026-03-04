@@ -1,0 +1,46 @@
+{
+  "feature_file": "ai_insight_reviews.feature",
+  "data_providers": [
+    "Auth",
+    "Database",
+    "CRM Sync Service",
+    "Transcription Mock (Whisper/Deepgram)",
+    "Plaid API",
+    "Wealthbox CRM",
+    "Salesforce CRM",
+    "Shadow Records Store",
+    "80/20 Squared Engine (Scoring Logic)",
+    "Notification Service",
+    "Dynamic Weighting Calculator"
+  ],
+  "services": [
+    "auth_service",
+    "asynchronous_transcription_service",
+    "crm_sync_priority_queue",
+    "ai_insight_engine",
+    "scoring_service",
+    "integration_manager",
+    "notification_gateway"
+  ],
+  "components": [
+    "dashboard_centric_hub",
+    "ai_insight_review_page",
+    "highlight_snippets_section",
+    "sentiment_chip_tag",
+    "subtraction_badge",
+    "conflict_resolution_modal",
+    "split_screen_diff",
+    "penalty_toggle_switch",
+    "override_reason_prompt",
+    "iconic_badge",
+    "integration_list_settings",
+    "status_indicators",
+    "glow_sidebar",
+    "stacked_micro_bars",
+    "drag_and_drop_kanban"
+  ],
+  "notes": {
+    "complex_logic": "Includes 80/20 Squared Engine and Dynamic Weight Re-distribution which require specialized calculator mocks.",
+    "external_integrations": "Multi-source sync involving Wealthbox, Plaid, Salesforce, and Deepgram."
+  }
+}
