@@ -60,28 +60,12 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithGoogle = async () => {
     setError(null)
     try {
-      const authData = await pb.collection('users').listAuthMethods()
-
-      // PocketBase returns oauth2.providers or authProviders depending on version/request
-      type OAuthProvider = { name: string; state: string; codeVerifier: string; authURL: string }
-      const data = authData as { oauth2?: { providers?: OAuthProvider[] }; authProviders?: OAuthProvider[] }
-      const providers = data?.oauth2?.providers ?? data?.authProviders ?? []
-      const provider = providers.find((p) => p.name === 'google')
-
-      if (!provider) {
-        console.error('Auth methods response:', authData)
-        throw new Error('No OAuth providers available')
-      }
-
-      localStorage.setItem('provider', JSON.stringify({
-        state: provider.state,
-        codeVerifier: provider.codeVerifier
-      }))
+      const res = await fetch('/api/auth/google')
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Failed to start Google sign-in')
 
       localStorage.setItem('redirectPath', location.pathname || '/')
-
-      const redirectUrl = `${window.location.origin}/oauth-callback`
-      window.location.href = `${provider.authURL}${encodeURIComponent(redirectUrl)}`
+      window.location.href = data.url
     } catch (err) {
       console.error('Google sign-in error:', err)
       setError(err instanceof Error ? err.message : 'Authentication failed')

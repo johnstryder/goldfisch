@@ -1,6 +1,6 @@
 # Google OAuth Troubleshooting
 
-The app uses a **manual redirect OAuth flow** with a custom callback page (`/oauth-callback`). The flow: listAuthMethods → redirect to Google → redirect back to `/oauth-callback` → authWithOAuth2Code.
+The app uses a **backend-initiated OAuth flow**. The backend fetches auth-methods from PocketBase directly (avoids proxy issues), stores the code verifier, and returns the Google OAuth URL. Flow: frontend → GET /api/auth/google → redirect to Google → redirect to /oauth-callback → GET /api/auth/oauth-verifier → authWithOAuth2Code.
 
 ## 1. Google Cloud Console setup
 
@@ -19,12 +19,11 @@ OAuth is configured **per collection**, not globally.
 4. Find the **OAuth2** section
 5. Enable **Google** and set Client ID and Client Secret from Google Cloud Console
 
-## 3. Backend proxy (POCKETBASE_URL)
-
-The frontend uses the same-origin proxy (`/api/pb`) to avoid CORS. The backend must proxy to PocketBase.
+## 3. Backend env
 
 **Backend env** (Coolify / runtime):
 - `POCKETBASE_URL=https://pb_goldfisch.iwishihadthis.com`
+- `SERVICE_URL_FRONTEND` or `FRONTEND_URL` – used for redirect URI (e.g. `https://goldfisch.iwishihadthis.com`)
 - `POCKETBASE_INSECURE_TLS=1` if TLS verification fails in Docker
 
 ## 4. Auth collection name

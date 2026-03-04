@@ -16,24 +16,18 @@ export function OAuthCallback() {
         const code = searchParams.get('code')
         const state = searchParams.get('state')
 
-        const providerJson = localStorage.getItem('provider')
-        if (!providerJson) {
-          throw new Error('No provider data found')
-        }
-        const provider = JSON.parse(providerJson)
+        if (!state) throw new Error('Missing state parameter')
+        if (!code) throw new Error('No code parameter received')
 
-        if (!state || state !== provider.state) {
-          throw new Error('Invalid state parameter')
-        }
-
-        if (!code) {
-          throw new Error('No code parameter received')
-        }
+        const verifierRes = await fetch(`/api/auth/oauth-verifier?state=${encodeURIComponent(state)}`)
+        const verifierData = await verifierRes.json()
+        if (!verifierRes.ok) throw new Error(verifierData.error || 'Invalid or expired state')
+        const codeVerifier = verifierData.codeVerifier
 
         const authData = await pb.collection('users').authWithOAuth2Code(
           'google',
           code,
-          provider.codeVerifier,
+          codeVerifier,
           `${window.location.origin}/oauth-callback`,
           { emailVisibility: true }
         )
@@ -42,8 +36,6 @@ export function OAuthCallback() {
           provider: 'google',
           is_new_user: authData.meta?.isNewRecord ?? false
         })
-
-        localStorage.removeItem('provider')
 
         const redirectPath = localStorage.getItem('redirectPath') || '/'
         localStorage.removeItem('redirectPath')

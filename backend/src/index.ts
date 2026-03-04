@@ -30,9 +30,35 @@ import {
   storeCalendarState,
   getCalendarState,
 } from './lib/calendar-tokens'
+import { redisClient } from './lib/redis'
 import { randomUUID } from 'crypto'
 
 config()
+
+// In-memory fallback for OAuth state when Redis unavailable
+const oauthStateStore = new Map<string, { codeVerifier: string; expires: number }>()
+const OAUTH_STATE_TTL_MS = 10 * 60 * 1000 // 10 min
+
+async function setOAuthState(state: string, codeVerifier: string): Promise<void> {
+  try {
+    await redisClient.setEx(`oauth:${state}`, 600, codeVerifier) // 10 min TTL
+  } catch {
+    oauthStateStore.set(state, { codeVerifier, expires: Date.now() + OAUTH_STATE_TTL_MS })
+  }
+}
+
+async function getOAuthState(state: string): Promise<string | null> {
+  try {
+    const v = await redisClient.get(`oauth:${state}`)
+    if (v) await redisClient.del(`oauth:${state}`)
+    return v
+  } catch {
+    const entry = oauthStateStore.get(state)
+    if (!entry || entry.expires < Date.now()) return null
+    oauthStateStore.delete(state)
+    return entry.codeVerifier
+  }
+}
 
 // When POCKETBASE_INSECURE_TLS=1, skip TLS verification (UNABLE_TO_VERIFY_LEAF_SIGNATURE in Docker)
 if (process.env.POCKETBASE_INSECURE_TLS === '1') {
@@ -314,6 +340,40 @@ app.get('/api/debug/pb-auth-methods', async (c) => {
   } catch (e) {
     return c.json({ error: String(e), pocketbaseUrl: baseUrl }, 500)
   }
+})
+
+// Google OAuth - backend fetches auth-methods from PocketBase (avoids proxy returning empty)
+app.get('/api/auth/google', async (c) => {
+  const baseUrl = (process.env.POCKETBASE_URL || 'http://localhost:8090').replace(/\/$/, '')
+  const frontendUrl = process.env.FRONTEND_URL || process.env.SERVICE_URL_FRONTEND || 'http://localhost:3000'
+  const redirectUri = `${frontendUrl.replace(/\/$/, '')}/oauth-callback`
+
+  try {
+    const res = await fetch(`${baseUrl}/api/collections/users/auth-methods`)
+    const data = (await res.json()) as {
+      oauth2?: { providers?: Array<{ name: string; state: string; codeVerifier: string; authURL: string }> }
+      authProviders?: Array<{ name: string; state: string; codeVerifier: string; authURL: string }>
+    }
+    const providers = data?.oauth2?.providers ?? data?.authProviders ?? []
+    const provider = providers.find((p) => p.name === 'google')
+    if (!provider) {
+      return c.json({ error: 'Google OAuth not configured in PocketBase' }, 400)
+    }
+    await setOAuthState(provider.state, provider.codeVerifier)
+    const url = `${provider.authURL}${encodeURIComponent(redirectUri)}`
+    return c.json({ url })
+  } catch (e) {
+    console.error('Google OAuth init error:', e)
+    return c.json({ error: 'Failed to start Google sign-in' }, 500)
+  }
+})
+
+app.get('/api/auth/oauth-verifier', async (c) => {
+  const state = c.req.query('state')
+  if (!state) return c.json({ error: 'Missing state' }, 400)
+  const codeVerifier = await getOAuthState(state)
+  if (!codeVerifier) return c.json({ error: 'Invalid or expired state' }, 400)
+  return c.json({ codeVerifier })
 })
 
 // PocketBase API proxy - avoids CORS when PocketBase is on a different domain
