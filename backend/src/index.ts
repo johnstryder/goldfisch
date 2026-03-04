@@ -298,6 +298,24 @@ app.get('/api/calendar/status', requireAuth, async (c) => {
   return c.json({ connected: !!tokens })
 })
 
+// Debug: see what PocketBase auth-methods returns (remove in production)
+app.get('/api/debug/pb-auth-methods', async (c) => {
+  const baseUrl = (process.env.POCKETBASE_URL || 'http://localhost:8090').replace(/\/$/, '')
+  const url = `${baseUrl}/api/collections/users/auth-methods`
+  try {
+    const res = await fetch(url)
+    const body = await res.text()
+    return c.json({
+      pocketbaseUrl: baseUrl,
+      status: res.status,
+      rawBody: body,
+      parsed: (() => { try { return JSON.parse(body) } catch { return null } })(),
+    })
+  } catch (e) {
+    return c.json({ error: String(e), pocketbaseUrl: baseUrl }, 500)
+  }
+})
+
 // PocketBase API proxy - avoids CORS when PocketBase is on a different domain
 app.all('/api/pb/*', async (c) => {
   const path = c.req.path.replace(/^\/api\/pb/, '') || '/'
