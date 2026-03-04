@@ -62,12 +62,16 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const authData = await pb.collection('users').listAuthMethods()
 
-      if (!authData?.oauth2?.providers) {
+      // PocketBase returns oauth2.providers or authProviders depending on version/request
+      type OAuthProvider = { name: string; state: string; codeVerifier: string; authURL: string }
+      const data = authData as { oauth2?: { providers?: OAuthProvider[] }; authProviders?: OAuthProvider[] }
+      const providers = data?.oauth2?.providers ?? data?.authProviders ?? []
+      const provider = providers.find((p) => p.name === 'google')
+
+      if (!provider) {
+        console.error('Auth methods response:', authData)
         throw new Error('No OAuth providers available')
       }
-
-      const provider = authData.oauth2.providers.find((p: { name: string }) => p.name === 'google')
-      if (!provider) throw new Error('Google provider not found')
 
       localStorage.setItem('provider', JSON.stringify({
         state: provider.state,
