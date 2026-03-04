@@ -53,6 +53,9 @@ services:
       - SENDGRID_API_KEY=${SENDGRID_API_KEY:-}
       - SENDGRID_FROM_EMAIL=${SENDGRID_FROM_EMAIL:-noreply@example.com}
       - SENDGRID_FROM_NAME=${SENDGRID_FROM_NAME:-Tezzemplate}
+      - GOOGLE_CLIENT_ID=${GOOGLE_CLIENT_ID:-}
+      - GOOGLE_CLIENT_SECRET=${GOOGLE_CLIENT_SECRET:-}
+      - GOOGLE_CALENDAR_REDIRECT_URI=${GOOGLE_CALENDAR_REDIRECT_URI:-}
     depends_on:
       pocketbase:
         condition: service_healthy
@@ -70,8 +73,7 @@ services:
       dockerfile: Dockerfile
     container_name: frontend
     restart: unless-stopped
-    ports:
-      - "3000:80"
+    # No port mapping - Coolify handles routing via reverse proxy
     depends_on:
       - backend
     healthcheck:
