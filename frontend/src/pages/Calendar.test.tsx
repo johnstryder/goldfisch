@@ -30,7 +30,7 @@ describe('Calendar page', () => {
 
   it('should show sign-in prompt when user is not authenticated', () => {
     renderWithRouter(<Calendar />)
-    expect(screen.getByText(/Sign in with Google to connect your calendar/i)).toBeInTheDocument()
+    expect(screen.getByText(/Sign in with Google and connect your calendar/i)).toBeInTheDocument()
   })
 
   it('should show Connect button when user is authenticated and calendar not connected', async () => {

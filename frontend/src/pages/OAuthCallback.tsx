@@ -43,7 +43,11 @@ export function OAuthCallback() {
         navigate(redirectPath, { replace: true })
       } catch (err) {
         console.error('OAuth callback error:', err)
-        setError('Authentication failed. Please try again.')
+        const msg = err instanceof Error ? err.message : String(err)
+        const detail = err && typeof err === 'object' && 'data' in err
+          ? (err as { data?: { message?: string } }).data?.message
+          : null
+        setError(detail || msg || 'Authentication failed. Please try again.')
       }
     }
 
