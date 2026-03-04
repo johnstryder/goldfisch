@@ -23,9 +23,9 @@ FRONTEND_URL=https://goldfisch.iwishihadthis.com
 # or SERVICE_URL_FRONTEND for Coolify
 ```
 
-**POCKETBASE_URL** – Backend proxies PocketBase API through `/api/pb/*` to avoid CORS. The frontend uses the proxy URL (same origin).
+**POCKETBASE_URL** – Backend proxies PocketBase API through `/api/pb/*` to avoid CORS.
 
-**FRONTEND_URL** or **SERVICE_URL_FRONTEND** – Used to build the proxy URL in `/api/config`.
+**POCKETBASE_INSECURE_TLS** – Set to `1` if you get `UNABLE_TO_VERIFY_LEAF_SIGNATURE` (Docker + Let's Encrypt). Skips cert verification for PB proxy only.
 
 ## If PocketBase is a separate Coolify app
 

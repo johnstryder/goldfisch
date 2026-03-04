@@ -34,6 +34,11 @@ import { randomUUID } from 'crypto'
 
 config()
 
+// When POCKETBASE_INSECURE_TLS=1, skip TLS verification (UNABLE_TO_VERIFY_LEAF_SIGNATURE in Docker)
+if (process.env.POCKETBASE_INSECURE_TLS === '1') {
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0'
+}
+
 // Initialize services
 initializePostHog()
 initializeRedis().catch(console.error)
@@ -297,13 +302,17 @@ app.get('/api/calendar/status', requireAuth, async (c) => {
 app.all('/api/pb/*', async (c) => {
   const path = c.req.path.replace(/^\/api\/pb/, '') || '/'
   const targetPath = path.startsWith('/') ? path : `/${path}`
-  const url = `${(process.env.POCKETBASE_URL || 'http://localhost:8090').replace(/\/$/, '')}${targetPath}`
+  const rawUrl = c.req.url
+  const query = rawUrl.includes('?') ? rawUrl.slice(rawUrl.indexOf('?')) : ''
+  const baseUrl = (process.env.POCKETBASE_URL || 'http://localhost:8090').replace(/\/$/, '')
+  const url = `${baseUrl}${targetPath}${query}`
   const method = c.req.method
 
   try {
     const headers = new Headers()
+    const skipHeaders = ['host', 'connection', 'origin', 'referer']
     c.req.raw.headers.forEach((v, k) => {
-      if (!['host', 'connection'].includes(k.toLowerCase())) {
+      if (!skipHeaders.includes(k.toLowerCase())) {
         headers.set(k, v)
       }
     })
@@ -323,8 +332,9 @@ app.all('/api/pb/*', async (c) => {
     })
     return new Response(responseBody, { status: response.status, headers: resHeaders })
   } catch (error) {
-    console.error('PocketBase proxy error:', error)
-    return c.json({ error: 'Proxy error' }, 500)
+    const errMsg = error instanceof Error ? error.message : String(error)
+    console.error('PocketBase proxy error:', errMsg, 'url:', url)
+    return c.json({ error: 'Proxy error', detail: errMsg }, 500)
   }
 })
 

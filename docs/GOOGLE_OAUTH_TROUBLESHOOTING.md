@@ -2,16 +2,19 @@
 
 When you see **"Google provider not found"**, the frontend successfully connected to PocketBase but the auth collection has no Google OAuth provider in its list.
 
-## 1. Verify PocketBase URL (runtime config)
+## 1. Verify PocketBase URL and proxy
 
-The frontend fetches the PocketBase URL from `/api/config` at runtime. The backend reads `POCKETBASE_URL` from its environment.
+The frontend uses same-origin requests to `/api/pb/*`; the backend proxies to PocketBase.
 
 **In Coolify** (runtime env vars for the backend):
 
 - Set `POCKETBASE_URL=https://pb_goldfisch.iwishihadthis.com`
-- No build-time vars needed; no rebuild required when changing the URL
+- The backend must be able to reach this URL (outbound HTTPS from the backend container)
 
-Check what URL the app uses: open DevTools → Network, click "Sign in with Google", and confirm the request goes to `https://pb_goldfisch.iwishihadthis.com/api/collections/users/...`.
+**If you get 500 on `/api/pb/...`**: Check backend logs for "PocketBase proxy error". Common causes:
+- Backend cannot reach `POCKETBASE_URL` (network/DNS)
+- Wrong or missing `POCKETBASE_URL`
+- **UNABLE_TO_VERIFY_LEAF_SIGNATURE**: TLS cert verification fails (incomplete chain in Docker). Set `POCKETBASE_INSECURE_TLS=1` in backend env to skip verification (use only if you trust the PocketBase host).
 
 ## 2. Configure Google OAuth on the auth collection
 

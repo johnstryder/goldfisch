@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 # Enable BuildKit for cache mounts
 FROM oven/bun:1 as base
-RUN apt-get update && apt-get install -y --no-install-recommends curl && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends curl ca-certificates && rm -rf /var/lib/apt/lists/*
 WORKDIR /app
 
 # Install dependencies

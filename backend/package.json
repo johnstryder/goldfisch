@@ -1,6 +1,6 @@
 {
   "name": "tezzemplate-backend",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "Backend API with Hono and PocketBase",
   "main": "dist/index.js",
   "type": "module",
