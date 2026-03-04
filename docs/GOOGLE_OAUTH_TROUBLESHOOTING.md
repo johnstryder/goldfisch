@@ -19,14 +19,13 @@ OAuth is configured **per collection**, not globally.
 4. Find the **OAuth2** section
 5. Enable **Google** and set Client ID and Client Secret from Google Cloud Console
 
-## 3. PocketBase URL
+## 3. Backend proxy (POCKETBASE_URL)
 
-Set `VITE_POCKETBASE_URL` in your frontend env when PocketBase is on a different domain:
+The frontend uses the same-origin proxy (`/api/pb`) to avoid CORS. The backend must proxy to PocketBase.
 
-- Production: `VITE_POCKETBASE_URL=https://pb_goldfisch.iwishihadthis.com`
-- Local: `VITE_POCKETBASE_URL=http://127.0.0.1:8090`
-
-When not set, the app uses the proxy (`/api/pb`).
+**Backend env** (Coolify / runtime):
+- `POCKETBASE_URL=https://pb_goldfisch.iwishihadthis.com`
+- `POCKETBASE_INSECURE_TLS=1` if TLS verification fails in Docker
 
 ## 4. Auth collection name
 
