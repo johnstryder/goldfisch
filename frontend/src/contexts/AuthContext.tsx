@@ -80,7 +80,14 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       })
       .catch((err) => {
         console.error('Google sign-in error:', err)
-        setError(err instanceof Error ? err.message : 'Authentication failed')
+        const msg = err instanceof Error ? err.message : String(err)
+        if (msg.includes('oauth2') || msg.includes('providers')) {
+          setError(
+            'Google OAuth is not configured. Check PocketBase: Collections → users → Options → OAuth2 has Google enabled with Client ID & Secret. Also ensure the backend POCKETBASE_URL points to the correct instance.'
+          )
+        } else {
+          setError(msg || 'Authentication failed')
+        }
       })
   }
 
