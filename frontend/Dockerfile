@@ -14,8 +14,9 @@ COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 RUN bun run build
 
-# Production image with nginx
+# Production image with nginx (curl for healthcheck)
 FROM nginx:alpine AS runner
+RUN apk add --no-cache curl
 COPY --from=builder /app/dist /usr/share/nginx/html
 COPY nginx.conf /etc/nginx/nginx.conf
 

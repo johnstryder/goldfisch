@@ -1,0 +1,14 @@
+# Use with: docker compose -f docker-compose.yaml -f docker-compose.prod.yml up
+# For deployment with external PocketBase (e.g. pb_goldfisch.iwishihadthis.com)
+# Removes PocketBase from the stack so backend doesn't wait for it.
+
+services:
+  pocketbase:
+    profiles:
+      - disabled
+  backend:
+    depends_on:
+      redis:
+        condition: service_healthy
+    environment:
+      - POCKETBASE_URL=${POCKETBASE_URL}
