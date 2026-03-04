@@ -18,8 +18,7 @@ services:
     image: ghcr.io/muchobien/pocketbase:latest
     container_name: pocketbase
     restart: unless-stopped
-    ports:
-      - "8090:8090"
+    # No port mapping - frontend proxies /pb/ to pocketbase internally
     volumes:
       - ./pb_data:/pb_data
       - ./pb_migrations:/pb_migrations
@@ -40,8 +39,7 @@ services:
       dockerfile: Dockerfile
     container_name: backend
     restart: unless-stopped
-    ports:
-      - "8000:8000"
+    # No port mapping - frontend proxies /api/ to backend internally
     environment:
       - NODE_ENV=production
       - PORT=8000
