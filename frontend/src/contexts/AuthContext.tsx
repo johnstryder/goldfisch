@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PocketBase from 'pocketbase'
+import { usePostHog } from 'posthog-js/react'
 import { useConfig } from './ConfigContext'
 
 interface User {
@@ -12,7 +13,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null
-  signInWithGoogle: () => Promise<void>
+  signInWithGoogle: () => void
   signOut: () => Promise<void>
   getToken: () => string | null
   isLoading: boolean
@@ -27,6 +28,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [error, setError] = useState<string | null>(null)
   const navigate = useNavigate()
   const { pocketbaseUrl } = useConfig()
+  const posthog = usePostHog()
 
   const pb = new PocketBase(pocketbaseUrl)
 
@@ -62,43 +64,24 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return unsubscribe
   }, [])
 
-  const signInWithGoogle = async () => {
-    try {
-      setError(null)
-      const authData = await pb.collection('users').listAuthMethods()
-      console.debug('[Auth] listAuthMethods response:', JSON.stringify(authData, null, 2))
-
-      if (!authData?.oauth2?.providers || authData.oauth2.providers.length === 0) {
-        const raw = JSON.stringify(authData ?? {}).slice(0, 200)
-        throw new Error(
-          `No OAuth providers available. ` +
-          (authData ? `PocketBase returned: ${raw}... Check Collections → users → Options → OAuth2 has Google enabled with Client ID & Secret.` : 'Check backend can reach PocketBase.')
-        )
-      }
-
-      const providers = authData.oauth2.providers as Array<{ name: string; authURL: string; state: string; codeVerifier: string }>
-      const provider = providers.find(
-        (p) => p.name?.toLowerCase() === 'google'
-      )
-      if (!provider) {
-        const names = providers.map((p) => p.name ?? '(unnamed)').join(', ')
-        throw new Error(
-          `Google provider not found. Available: ${names || 'none'}. ` +
-          'Enable Google OAuth in PocketBase: Collections → users → Options → OAuth2.'
-        )
-      }
-
-      localStorage.setItem('provider', JSON.stringify({
-        state: provider.state,
-        codeVerifier: provider.codeVerifier,
-      }))
-
-      const redirectUrl = `${window.location.origin}/oauth-callback`
-      window.location.href = `${provider.authURL}${encodeURIComponent(redirectUrl)}`
-    } catch (err) {
-      console.error('Google sign-in error:', err)
-      setError(err instanceof Error ? err.message : 'Authentication failed')
-    }
+  // Use .then() instead of async/await so Safari doesn't block the popup (PocketBase docs)
+  const signInWithGoogle = () => {
+    setError(null)
+    pb.collection('users')
+      .authWithOAuth2({
+        provider: 'google',
+        createData: { emailVisibility: true },
+      })
+      .then((authData) => {
+        posthog?.capture('user_signed_up', {
+          provider: 'google',
+          is_new_user: authData.meta?.isNewRecord ?? false,
+        })
+      })
+      .catch((err) => {
+        console.error('Google sign-in error:', err)
+        setError(err instanceof Error ? err.message : 'Authentication failed')
+      })
   }
 
   const signOut = async () => {

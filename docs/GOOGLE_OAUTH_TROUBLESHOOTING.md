@@ -1,6 +1,6 @@
-# Google OAuth "Provider not found" Troubleshooting
+# Google OAuth Troubleshooting
 
-When you see **"Google provider not found"**, the frontend successfully connected to PocketBase but the auth collection has no Google OAuth provider in its list.
+The app uses PocketBase's **popup OAuth flow** (`authWithOAuth2`). A popup opens for Google sign-in; no custom redirect page is needed.
 
 ## 1. Verify PocketBase URL and proxy
 
@@ -24,25 +24,15 @@ OAuth is configured **per collection**, not globally.
 2. Go to **Collections** → select your auth collection (usually **users**)
 3. Click the **Options** (gear) icon
 4. Find the **OAuth2** section
-5. Enable **Google** and set:
-   - Client ID (from Google Cloud Console)
-   - Client Secret
-   - Redirect URL: `https://goldfisch.iwishihadthis.com/oauth-callback`
+5. Enable **Google** and set Client ID and Client Secret from Google Cloud Console
 
 ## 3. Google Cloud Console setup
 
 1. Create OAuth 2.0 credentials (Web application)
-2. Add authorized redirect URI: `https://goldfisch.iwishihadthis.com/oauth-callback`
+2. Add authorized redirect URI: `https://pb_goldfisch.iwishihadthis.com/api/oauth2-redirect`
+   - For local testing: `http://127.0.0.1:8090/api/oauth2-redirect`
 3. Copy Client ID and Client Secret into PocketBase
 
-## 4. Check the error message
+## 4. Auth collection name
 
-After the recent change, the error message shows which providers *are* available, e.g.:
-
-- `Available: none` → OAuth2 not enabled on the collection
-- `Available: github, microsoft` → Google not enabled; add it in PocketBase
-- `Available: google` → Should work; if it still fails, the lookup may have been case-sensitive (now fixed)
-
-## 5. Auth collection name
-
-The app uses `users` by default. If your auth collection has a different name, you’d need to update `AuthContext.tsx` and `OAuthCallback.tsx` to use that collection.
+The app uses `users` by default. If your auth collection has a different name, you’d need to update `AuthContext.tsx` to use that collection.

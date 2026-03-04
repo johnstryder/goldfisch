@@ -3,7 +3,6 @@ import { Routes, Route, Link } from 'react-router-dom'
 import { usePostHog } from 'posthog-js/react'
 import { ConfigProvider } from './contexts/ConfigContext'
 import { AuthProvider, useAuth } from './contexts/AuthContext'
-import { OAuthCallback } from './components/OAuthCallback'
 import { Layout } from './components/Layout'
 import { Dashboard } from './pages/Dashboard'
 import { SegmentationDashboard } from './pages/SegmentationDashboard'
@@ -68,7 +67,6 @@ function AppContent() {
 
   return (
     <Routes>
-      <Route path="/oauth-callback" element={<OAuthCallback />} />
       <Route
         path="/"
         element={
