@@ -1,0 +1,35 @@
+# Dependencies (installed fresh in Docker)
+node_modules
+
+# Build output
+dist
+
+# Git
+.git
+.gitignore
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+
+# Logs and temp
+*.log
+*.tmp
+.DS_Store
+
+# Test and dev
+coverage
+*.test.tsx
+*.test.ts
+*.spec.tsx
+*.spec.ts
+features
+.playwright
+test-results
+playwright-report
+playwright/.cache
+
+# Docs (not needed for build)
+README.md
+docs

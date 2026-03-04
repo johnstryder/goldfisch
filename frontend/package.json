@@ -1,7 +1,7 @@
 {
   "name": "tezzemplate-frontend",
   "private": true,
-  "version": "0.0.2",
+  "version": "0.0.5",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -12,7 +12,9 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@testing-library/jest-dom": "^6.9.1",
     "clsx": "^2.1.1",
+    "jsdom": "^28.1.0",
     "lucide-react": "^0.503.0",
     "pocketbase": "^0.26.5",
     "posthog-js": "^1.305.0",

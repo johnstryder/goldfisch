@@ -1,6 +1,6 @@
 {
   "name": "tezzemplate-backend",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "Backend API with Hono and PocketBase",
   "main": "dist/index.js",
   "type": "module",
@@ -19,6 +19,8 @@
     "dotenv": "^16.3.1",
     "express": "^4.18.0",
     "express-session": "^1.17.3",
+    "google-auth-library": "^10.6.1",
+    "googleapis": "^171.4.0",
     "hono": "^4.0.0",
     "pocketbase": "^0.21.0",
     "posthog-node": "^4.0.0",

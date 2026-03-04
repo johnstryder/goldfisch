@@ -1,17 +1,18 @@
-FROM node:18-alpine as base
-
+# syntax=docker/dockerfile:1
+# Enable BuildKit for cache mounts
+FROM oven/bun:1 as base
 WORKDIR /app
 
-# Install dependencies (including devDependencies for build)
+# Install dependencies
 FROM base AS deps
-COPY package*.json ./
-RUN npm ci
+COPY package.json bun.lock* package-lock.json* ./
+RUN --mount=type=cache,id=bun-frontend,target=/root/.bun/install/cache bun install
 
 # Build the app
-FROM base AS builder
+FROM deps AS builder
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
-RUN npm run build
+RUN bun run build
 
 # Production image with nginx
 FROM nginx:alpine AS runner

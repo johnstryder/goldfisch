@@ -18,6 +18,19 @@ import {
   createScenarioSnapshot,
   createTierHistoryEntry,
 } from './services/scenario.service'
+import {
+  getCalendarAuthUrl,
+  fetchCalendarEvents,
+  exchangeCodeForTokens,
+} from './services/google-calendar.service'
+import { requireAuth } from './middleware/auth'
+import {
+  storeCalendarTokens,
+  getCalendarTokens,
+  storeCalendarState,
+  getCalendarState,
+} from './lib/calendar-tokens'
+import { randomUUID } from 'crypto'
 
 config()
 
@@ -187,6 +200,89 @@ app.post('/api/tier-history', async (c) => {
     console.error('Tier history error:', error)
     return c.json({ error: 'Tier history creation failed' }, 500)
   }
+})
+
+// Google Calendar API routes (require auth)
+app.get('/api/calendar/connect', requireAuth, async (c) => {
+  const userId = c.get('userId')
+  const clientId = process.env.GOOGLE_CLIENT_ID
+  const redirectUri = process.env.GOOGLE_CALENDAR_REDIRECT_URI || `${process.env.FRONTEND_URL || 'http://localhost:3000'}/api/calendar/callback`
+  if (!clientId) {
+    return c.json({ error: 'Google OAuth not configured' }, 500)
+  }
+  const state = randomUUID()
+  await storeCalendarState(state, userId)
+  const url = getCalendarAuthUrl(clientId, redirectUri, state)
+  return c.json({ authUrl: url })
+})
+
+app.get('/api/calendar/callback', async (c) => {
+  const code = c.req.query('code')
+  const state = c.req.query('state')
+  const error = c.req.query('error')
+  const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:3000'
+
+  if (error) {
+    return c.redirect(`${frontendUrl}/calendar?error=${encodeURIComponent(error)}`)
+  }
+  if (!code || !state) {
+    return c.redirect(`${frontendUrl}/calendar?error=missing_params`)
+  }
+
+  const userId = await getCalendarState(state)
+  if (!userId) {
+    return c.redirect(`${frontendUrl}/calendar?error=invalid_state`)
+  }
+
+  const clientId = process.env.GOOGLE_CLIENT_ID
+  const clientSecret = process.env.GOOGLE_CLIENT_SECRET
+  const redirectUri = process.env.GOOGLE_CALENDAR_REDIRECT_URI || `${frontendUrl}/api/calendar/callback`
+  if (!clientId || !clientSecret) {
+    return c.redirect(`${frontendUrl}/calendar?error=config`)
+  }
+
+  try {
+    const tokens = await exchangeCodeForTokens(code, clientId, clientSecret, redirectUri)
+    await storeCalendarTokens(userId, {
+      accessToken: tokens.accessToken,
+      refreshToken: tokens.refreshToken,
+      expiresAt: tokens.expiresAt,
+    })
+    return c.redirect(`${frontendUrl}/calendar?connected=1`)
+  } catch (err) {
+    console.error('Calendar OAuth error:', err)
+    return c.redirect(`${frontendUrl}/calendar?error=exchange_failed`)
+  }
+})
+
+app.get('/api/calendar/events', requireAuth, async (c) => {
+  const userId = c.get('userId')
+  const tokens = await getCalendarTokens(userId)
+  if (!tokens) {
+    return c.json({ error: 'Google Calendar not connected', connected: false }, 400)
+  }
+
+  const timeMin = c.req.query('timeMin') ?? new Date().toISOString()
+  const timeMax = c.req.query('timeMax') ?? new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString()
+  const maxResults = parseInt(c.req.query('maxResults') ?? '50', 10)
+
+  try {
+    const events = await fetchCalendarEvents(tokens.accessToken, {
+      timeMin,
+      timeMax,
+      maxResults,
+    })
+    return c.json({ events, connected: true })
+  } catch (err) {
+    console.error('Calendar fetch error:', err)
+    return c.json({ error: 'Failed to fetch calendar events', connected: true }, 500)
+  }
+})
+
+app.get('/api/calendar/status', requireAuth, async (c) => {
+  const userId = c.get('userId')
+  const tokens = await getCalendarTokens(userId)
+  return c.json({ connected: !!tokens })
 })
 
 // PocketBase proxy for admin operations

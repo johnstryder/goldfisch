@@ -1,0 +1,29 @@
+# Dependencies (installed fresh in Docker)
+node_modules
+
+# Build output
+dist
+
+# Git
+.git
+.gitignore
+
+# Env and secrets
+.env
+.env.*
+!.env.example
+
+# Logs and temp
+*.log
+*.tmp
+.DS_Store
+
+# Test and dev
+coverage
+*.test.ts
+*.spec.ts
+features
+
+# Docs (not needed for build)
+README.md
+docs

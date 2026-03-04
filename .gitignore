@@ -35,9 +35,6 @@ pb_migrations/
 # Redis data
 redis_data/
 
-# Docker
-.dockerignore
-
 # Temporary files
 *.tmp
 *.temp

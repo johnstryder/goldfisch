@@ -13,6 +13,7 @@ interface AuthContextType {
   user: User | null
   signInWithGoogle: () => Promise<void>
   signOut: () => Promise<void>
+  getToken: () => string | null
   isLoading: boolean
   error: string | null
 }
@@ -65,11 +66,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const authData = await pb.collection('users').listAuthMethods()
       
       if (!authData?.oauth2?.providers) {
-        throw new Error('No OAuth providers available')
+        const hint = authData ? 'OAuth2 not configured for this collection.' : 'Check VITE_POCKETBASE_URL points to your PocketBase.'
+        throw new Error(`No OAuth providers available. ${hint}`)
       }
 
-      const provider = authData.oauth2.providers.find((p: any) => p.name === 'google')
-      if (!provider) throw new Error('Google provider not found')
+      const providers = authData.oauth2.providers as Array<{ name: string; authURL: string; state: string; codeVerifier: string }>
+      const provider = providers.find(
+        (p) => p.name?.toLowerCase() === 'google'
+      )
+      if (!provider) {
+        const names = providers.map((p) => p.name ?? '(unnamed)').join(', ')
+        throw new Error(
+          `Google provider not found. Available: ${names || 'none'}. ` +
+          'Enable Google OAuth in PocketBase: Collections → users → Options → OAuth2.'
+        )
+      }
 
       localStorage.setItem('provider', JSON.stringify({
         state: provider.state,
@@ -94,8 +105,10 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     }
   }
 
+  const getToken = () => pb.authStore.token
+
   return (
-    <AuthContext.Provider value={{ user, signInWithGoogle, signOut, isLoading, error }}>
+    <AuthContext.Provider value={{ user, signInWithGoogle, signOut, getToken, isLoading, error }}>
       {children}
     </AuthContext.Provider>
   )

@@ -8,6 +8,7 @@ import { SegmentationDashboard } from './pages/SegmentationDashboard'
 import { ClientScoring } from './pages/ClientScoring'
 import { TimeAllocation } from './pages/TimeAllocation'
 import { DataOnboarding } from './pages/DataOnboarding'
+import { Calendar } from './pages/Calendar'
 
 function AppContent() {
   const auth = useAuth()
@@ -77,6 +78,7 @@ function AppContent() {
               <Link to="/scoring" className="text-sm hover:underline">Client Scoring</Link>
               <Link to="/time-allocation" className="text-sm hover:underline">Time Allocation</Link>
               <Link to="/onboarding" className="text-sm hover:underline">Data Onboarding</Link>
+              <Link to="/calendar" className="text-sm hover:underline">Calendar</Link>
               <div className="ml-auto">
                 {auth.user ? (
                   <button onClick={auth.signOut} className="text-sm text-gray-600 hover:underline">
@@ -144,6 +146,7 @@ function AppContent() {
       <Route path="/scoring" element={<ClientScoring />} />
       <Route path="/time-allocation" element={<TimeAllocation />} />
       <Route path="/onboarding" element={<DataOnboarding />} />
+      <Route path="/calendar" element={<Calendar />} />
     </Routes>
   )
 }
